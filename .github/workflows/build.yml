@@ -1,0 +1,29 @@
+on:
+    pull_request:
+    push:
+
+name: Build code
+ 
+jobs:
+    build:
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v2
+            - uses: lukka/get-cmake@latest
+            - name: Install dependencies
+              run: sudo apt install qttools5-dev liblightdm-qt5-3-dev --no-install-recommends --yes
+            - name: Build
+              run: |
+                mkdir build
+                cd build
+                cmake ..
+                cmake --build .
+                cpack
+            - uses: "marvinpinto/action-automatic-releases@latest"
+              with:
+                repo_token: "${{ secrets.GITHUB_TOKEN }}"
+                automatic_release_tag: "latest"
+                prerelease: false
+                title: "Current build"
+                files: build/lightdm-qt5-greeter-0.1.1-Linux.deb
+              if: ${{ github.ref == 'ref/head/master' }}
