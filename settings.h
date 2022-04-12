@@ -25,6 +25,7 @@ public:
 #define CCS_CONTEST_API_URL "ccs-contest-api-url"
 #define CCS_AUTOLOGIN_USERNAME "ccs-autologin-username"
 #define CCS_AUTOLOGIN_PASSWORD "ccs-autologin-password"
+#define CCS_START_MINIMUM_MSEC "ccs-start-minimum-msec"
 
 class Settings : public QSettings
 {
@@ -38,6 +39,7 @@ public:
     QString ccsContestApiUrl() { return value(CCS_CONTEST_API_URL).toString(); }
     QString ccsAutologinUsername() { return value(CCS_AUTOLOGIN_USERNAME).toString(); }
     QString ccsAutologinPassword() { return value(CCS_AUTOLOGIN_PASSWORD).toString(); }
+    int ccsStartMinimumMsec() { return value(CCS_START_MINIMUM_MSEC, 500).toInt(); }
 };
 
 #endif // SETTINGS_H

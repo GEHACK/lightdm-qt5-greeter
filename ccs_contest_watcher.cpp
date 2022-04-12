@@ -3,6 +3,7 @@
 //
 
 #include "ccs_contest_watcher.h"
+#include "settings.h"
 
 CcsContestWatcher::CcsContestWatcher(QObject *parent) : QObject(parent) {
     manager = new QNetworkAccessManager(this);
@@ -57,7 +58,7 @@ void CcsContestWatcher::replyFinished(QNetworkReply *reply) {
             emit contestAboutToStart();
 
             // Start a single shot timer to actually start the contest, but never start it within 500ms of the previous signal
-            diff = std::max(diff, (long long) START_MINIMUM_MSEC);
+            diff = std::max(diff, (long long) Settings().ccsStartMinimumMsec());
 
             QTimer::singleShot(diff, Qt::PreciseTimer, [this]() {
                 emit contestStarted();
