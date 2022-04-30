@@ -43,6 +43,10 @@ MainWindow::MainWindow(int screen, QWidget *parent) :
         m_LoginForm->move(offsetX, offsetY);
         m_LoginForm->show();
 
+        connect(m_LoginForm, SIGNAL(passwordWasInvalid(bool)), this, SLOT(showWrongPasswordLabel(bool)));
+        connect(m_LoginForm, SIGNAL(userIsEnteringData()), this, SLOT(hideWrongPasswordLabel()));
+        connect(m_LoginForm, SIGNAL(contestCantBeLoaded(QString)), this, SLOT(showContestcantBeLoaded(QString)));
+
         // This hack ensures that the primary screen will have focus
         // if there are more screens (move the mouse cursor in the center
         // of primary screen - not in the center of all X area). It
@@ -50,6 +54,25 @@ MainWindow::MainWindow(int screen, QWidget *parent) :
         int centerX = screenRect.width() / 2 + screenRect.x();
         int centerY = screenRect.height() / 2 + screenRect.y();
         QCursor::setPos(centerX, centerY);
+
+        m_InfoLabel = new QLabel(this);
+        m_InfoLabel->setWordWrap(true);
+        m_InfoLabel->setAlignment(Qt::AlignCenter);
+        m_InfoLabel->setVisible(false);
+
+        QPalette pal = QPalette();
+        pal.setColor(QPalette::Window, Qt::red);
+        pal.setColor(QPalette::WindowText, Qt::white);
+
+        QFont font = QFont();
+        font.setPointSize(16);
+
+        m_InfoLabel->setAutoFillBackground(true);
+        m_InfoLabel->setPalette(pal);
+        m_InfoLabel->setFont(font);
+
+        m_InfoLabel->move(0, this->height() - 100);
+        m_InfoLabel->resize(this->width(), 100);
     }
 }
 
@@ -133,4 +156,22 @@ void MainWindow::backgroundDownloaded(const QString& path) {
     QBrush brush(backgroundImage.scaled(rect.width(), rect.height()));
     palette.setBrush(this->backgroundRole(), brush);
     this->setPalette(palette);
+}
+
+void MainWindow::showWrongPasswordLabel(bool forAutoLogin) {
+    if (forAutoLogin) {
+        m_InfoLabel->setText("Auto login failed");
+    } else {
+        m_InfoLabel->setText("Wrong username or password");
+    }
+    m_InfoLabel->setVisible(true);
+}
+
+void MainWindow::hideWrongPasswordLabel() {
+    m_InfoLabel->setVisible(false);
+}
+
+void MainWindow::showContestcantBeLoaded(const QString& message) {
+    m_InfoLabel->setText("Contest can't be loaded: " + message);
+    m_InfoLabel->setVisible(true);
 }

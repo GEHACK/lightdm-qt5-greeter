@@ -19,13 +19,13 @@ Q_OBJECT
 public:
     explicit CcsContestWatcher(QObject *parent = nullptr);
 
-    void startWatching(QString u);
+    void startWatching();
 
 signals:
 
     void contestAboutToStart();
-
     void contestStarted();
+    void errorLoadingContest(QString message);
 
 private slots:
 
@@ -36,7 +36,6 @@ private slots:
 private:
     QNetworkAccessManager *manager;
     QTimer *timer;
-    QString url;
     static const int ABOUT_TO_START_MSEC = 15000;
     static const int START_MINIMUM_MSEC = 500;
 };

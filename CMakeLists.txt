@@ -19,6 +19,7 @@ pkg_check_modules(LIGHTDM_QT liblightdm-qt5-3)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}
                       ${CMAKE_CURRENT_BINARY_DIR}
                       ${LIGHTDM_QT_INCLUDE_DIRS}
+                      /usr/include/lightdm-qt5-3
 )
 
 add_executable(lightdm-qt5-greeter ${SRCS} ${RSCS})

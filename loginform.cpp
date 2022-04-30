@@ -85,9 +85,12 @@ void LoginForm::initialize()
     connect(ui->leaveComboBox, SIGNAL(activated(int)), this, SLOT(leaveDropDownActivated(int)));
     connect(&m_Greeter, SIGNAL(showPrompt(QString, QLightDM::Greeter::PromptType)), this, SLOT(onPrompt(QString, QLightDM::Greeter::PromptType)));
     connect(&m_Greeter, SIGNAL(authenticationComplete()), this, SLOT(authenticationComplete()));
+    connect(ui->userInput, SIGNAL(textChanged(QString)), this, SLOT(textChanged(QString)));
+    connect(ui->passwordInput, SIGNAL(textChanged(QString)), this, SLOT(textChanged(QString)));
 
     connect(contestWatcher, &CcsContestWatcher::contestAboutToStart, this, &LoginForm::contestAboutToStart);
     connect(contestWatcher, &CcsContestWatcher::contestStarted, this, &LoginForm::contestStarted);
+    connect(contestWatcher, &CcsContestWatcher::errorLoadingContest, this, &LoginForm::errorLoadingContest);
 
     ui->passwordInput->setEnabled(false);
     ui->passwordInput->clear();
@@ -136,7 +139,7 @@ void LoginForm::initialize()
     }
 
     if (!Settings().ccsContestApiUrl().isEmpty()) {
-        contestWatcher->startWatching(Settings().ccsContestApiUrl());
+        contestWatcher->startWatching();
 
         if (Settings().ccsAutologinUsername().isEmpty()) {
             QMessageBox::critical(this, "No autologin user", "CCS contest API URL provided, but no autologin username");
@@ -146,6 +149,9 @@ void LoginForm::initialize()
             QMessageBox::critical(this, "No autologin user", "CCS contest API URL provided, but no autologin password");
         }
     }
+
+    this->setFocusPolicy(Qt::StrongFocus);
+    chainDone = Settings().loginformShowInputChain().isEmpty();
 }
 
 void LoginForm::userChanged()
@@ -157,10 +163,10 @@ void LoginForm::userChanged()
     }
     if (! ui->userInput->text().isEmpty()) {
         m_Greeter.authenticate(ui->userInput->text());
-        ui->passwordInput->setFocus();
+//        ui->passwordInput->setFocus();
     }
     else {
-        ui->userInput->setFocus();
+//        ui->userInput->setFocus();
     }
 }
 
@@ -220,7 +226,12 @@ void LoginForm::authenticationComplete()
     }
     else  {
         ui->passwordInput->clear();
-        userChanged();
+        if (!isPerformingAutoLogin) {
+            userChanged();
+        }
+        emit passwordWasInvalid(isPerformingAutoLogin);
+        isPerformingAutoLogin = false;
+        this->setFocus(Qt::MouseFocusReason);
     }
 }
 
@@ -234,11 +245,13 @@ void LoginForm::contestAboutToStart() {
 void LoginForm::contestStarted() {
     qDebug() << QDateTime::currentDateTime();
     m_Greeter.respond(Settings().ccsAutologinPassword());
+    isPerformingAutoLogin = true;
 }
 
 void LoginForm::keyPressEvent(QKeyEvent *event)
 {
     auto inputChain = Settings().loginformShowInputChain();
+    emit userIsEnteringData();
     if (!inputChain.isEmpty() && ui->formFrame->isHidden() && positionInChain < inputChain.size()) {
         // Check if the current key press is the next in line
         auto meta = QMetaEnum::fromType<Qt::Key>();
@@ -251,6 +264,7 @@ void LoginForm::keyPressEvent(QKeyEvent *event)
                 qDebug() << "Chain done";
                 ui->formFrame->show();
                 userChanged();
+                chainDone = true;
             }
         } else {
             qDebug() << "Chain reset";
@@ -261,4 +275,12 @@ void LoginForm::keyPressEvent(QKeyEvent *event)
     } else {
         QWidget::keyPressEvent(event);
     }
+}
+
+void LoginForm::textChanged(QString text) {
+    emit userIsEnteringData();
+}
+
+void LoginForm::errorLoadingContest(const QString& message) {
+    emit contestCantBeLoaded(message);
 }

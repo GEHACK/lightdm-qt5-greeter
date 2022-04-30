@@ -44,6 +44,8 @@ private slots:
     void authenticationComplete();
     void contestAboutToStart();
     void contestStarted();
+    void textChanged(QString text);
+    void errorLoadingContest(const QString& message);
 
 protected:
     virtual void keyPressEvent(QKeyEvent *event);
@@ -64,7 +66,15 @@ private:
 
     int positionInChain = 0;
 
+    bool isPerformingAutoLogin = false;
+    bool chainDone;
+
     CcsContestWatcher *contestWatcher;
+
+signals:
+    void passwordWasInvalid(bool wasAutoLogin);
+    void userIsEnteringData();
+    void contestCantBeLoaded(const QString& message);
 };
 
 #endif // LOGINFORM_H

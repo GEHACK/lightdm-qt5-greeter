@@ -9,6 +9,7 @@
 #define MAINWINDOW_H
 
 #include <QWidget>
+#include <QLabel>
 
 #include <QLightDM/Greeter>
 
@@ -37,10 +38,14 @@ private:
     void setBackground();
     int m_Screen;
     LoginForm* m_LoginForm;
+    QLabel* m_InfoLabel;
     Downloader *d;
 
 private slots:
     void backgroundDownloaded(const QString& path);
+    void showWrongPasswordLabel(bool forAutoLogin);
+    void hideWrongPasswordLabel();
+    void showContestcantBeLoaded(const QString& message);
 };
 
 #endif // MAINWINDOW_H

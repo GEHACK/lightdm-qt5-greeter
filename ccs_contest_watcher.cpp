@@ -12,14 +12,13 @@ CcsContestWatcher::CcsContestWatcher(QObject *parent) : QObject(parent) {
     connect(timer, &QTimer::timeout, this, &CcsContestWatcher::checkCcsUrl);
 }
 
-void CcsContestWatcher::startWatching(QString u) {
-    url = std::move(u);
+void CcsContestWatcher::startWatching() {
     timer->start(3000);
     checkCcsUrl();
 }
 
 void CcsContestWatcher::checkCcsUrl() {
-    manager->get(QNetworkRequest(QUrl(url)));
+    manager->get(QNetworkRequest(QUrl(Settings().ccsContestApiUrl())));
 }
 
 void CcsContestWatcher::replyFinished(QNetworkReply *reply) {
@@ -28,20 +27,24 @@ void CcsContestWatcher::replyFinished(QNetworkReply *reply) {
     if (reply->error()) {
         qDebug() << "ERROR checking CCS contest!";
         qDebug() << reply->errorString();
+        emit errorLoadingContest(reply->errorString());
     } else {
         auto response = reply->readAll();
         auto data = QJsonDocument::fromJson(response);
         if (data.isNull()) {
+            emit errorLoadingContest("Data is null");
             return;
         }
 
         if (!data.isObject()) {
+            emit errorLoadingContest("Data is not an object");
             return;
         }
 
         auto contest = data.object();
 
         if (!contest.contains("start_time") || !contest.value("start_time").isString()) {
+            emit errorLoadingContest("Contest has no start time");
             return;
         }
 
