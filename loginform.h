@@ -75,6 +75,7 @@ signals:
     void passwordWasInvalid(bool wasAutoLogin);
     void userIsEnteringData();
     void contestCantBeLoaded(const QString& message);
+    void userPressedKey();
 };
 
 #endif // LOGINFORM_H

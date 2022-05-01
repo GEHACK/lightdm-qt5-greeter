@@ -46,6 +46,7 @@ private slots:
     void showWrongPasswordLabel(bool forAutoLogin);
     void hideWrongPasswordLabel();
     void showContestcantBeLoaded(const QString& message);
+    void showDoNotMachine();
 };
 
 #endif // MAINWINDOW_H

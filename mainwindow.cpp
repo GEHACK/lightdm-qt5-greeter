@@ -46,6 +46,7 @@ MainWindow::MainWindow(int screen, QWidget *parent) :
         connect(m_LoginForm, SIGNAL(passwordWasInvalid(bool)), this, SLOT(showWrongPasswordLabel(bool)));
         connect(m_LoginForm, SIGNAL(userIsEnteringData()), this, SLOT(hideWrongPasswordLabel()));
         connect(m_LoginForm, SIGNAL(contestCantBeLoaded(QString)), this, SLOT(showContestcantBeLoaded(QString)));
+        connect(m_LoginForm, SIGNAL(userPressedKey()), this, SLOT(showDoNotMachine()));
 
         // This hack ensures that the primary screen will have focus
         // if there are more screens (move the mouse cursor in the center
@@ -173,5 +174,10 @@ void MainWindow::hideWrongPasswordLabel() {
 
 void MainWindow::showContestcantBeLoaded(const QString& message) {
     m_InfoLabel->setText("Contest can't be loaded: " + message);
+    m_InfoLabel->setVisible(true);
+}
+
+void MainWindow::showDoNotMachine() {
+    m_InfoLabel->setText("Do not touch the machine");
     m_InfoLabel->setVisible(true);
 }

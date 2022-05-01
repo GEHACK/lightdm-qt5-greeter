@@ -251,8 +251,8 @@ void LoginForm::contestStarted() {
 void LoginForm::keyPressEvent(QKeyEvent *event)
 {
     auto inputChain = Settings().loginformShowInputChain();
-    emit userIsEnteringData();
     if (!inputChain.isEmpty() && ui->formFrame->isHidden() && positionInChain < inputChain.size()) {
+        emit userPressedKey();
         // Check if the current key press is the next in line
         auto meta = QMetaEnum::fromType<Qt::Key>();
         auto key = QString(meta.valueToKey(event->key()));
@@ -261,6 +261,7 @@ void LoginForm::keyPressEvent(QKeyEvent *event)
             qDebug() << "Chain advance";
             positionInChain++;
             if (positionInChain == inputChain.size()) {
+                emit userIsEnteringData();
                 qDebug() << "Chain done";
                 ui->formFrame->show();
                 userChanged();
