@@ -59,7 +59,9 @@ MainWindow::MainWindow(int screen, QWidget *parent) :
         m_InfoLabel = new QLabel(this);
         m_InfoLabel->setWordWrap(true);
         m_InfoLabel->setAlignment(Qt::AlignCenter);
-        m_InfoLabel->setVisible(false);
+        // TODO: enable again and remove initial lable
+//        m_InfoLabel->setVisible(false);
+        m_InfoLabel->setText(Settings().initialMessage());
 
         QPalette pal = QPalette();
         pal.setColor(QPalette::Window, Qt::red);
@@ -169,7 +171,7 @@ void MainWindow::showWrongPasswordLabel(bool forAutoLogin) {
 }
 
 void MainWindow::hideWrongPasswordLabel() {
-    m_InfoLabel->setVisible(false);
+//    m_InfoLabel->setVisible(false);
 }
 
 void MainWindow::showContestcantBeLoaded(const QString& message) {
