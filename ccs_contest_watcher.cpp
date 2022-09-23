@@ -8,6 +8,7 @@
 CcsContestWatcher::CcsContestWatcher(QObject *parent) : QObject(parent) {
     manager = new QNetworkAccessManager(this);
     connect(manager, &QNetworkAccessManager::finished, this, &CcsContestWatcher::replyFinished);
+    connect(manager, &QNetworkAccessManager::sslErrors, this, &CcsContestWatcher::allowSslErrors);
     timer = new QTimer(this);
     connect(timer, &QTimer::timeout, this, &CcsContestWatcher::checkCcsUrl);
 }
@@ -70,4 +71,8 @@ void CcsContestWatcher::replyFinished(QNetworkReply *reply) {
             timer->stop();
         }
     }
+}
+
+void CcsContestWatcher::allowSslErrors(QNetworkReply *reply, const QList<QSslError> &errors) {
+    reply->ignoreSslErrors();
 }

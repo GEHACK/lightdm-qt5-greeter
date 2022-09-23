@@ -10,6 +10,8 @@
 #include <QNetworkRequest>
 #include <QNetworkReply>
 #include <QUrl>
+#include <QList>
+#include <QSslError>
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QTimer>
@@ -31,6 +33,7 @@ private slots:
 
     void checkCcsUrl();
 
+    void allowSslErrors(QNetworkReply *reply, const QList<QSslError> &errors);
     void replyFinished(QNetworkReply *reply);
 
 private:
