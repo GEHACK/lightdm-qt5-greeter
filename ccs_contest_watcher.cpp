@@ -49,6 +49,8 @@ void CcsContestWatcher::replyFinished(QNetworkReply *reply) {
             return;
         }
 
+        emit clearErrors();
+
         auto contestStartTime = contest.value("start_time").toString();
         auto start = QDateTime::fromString(contestStartTime, Qt::ISODate);
 

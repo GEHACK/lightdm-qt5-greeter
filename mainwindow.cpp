@@ -46,6 +46,7 @@ MainWindow::MainWindow(int screen, QWidget *parent) :
         connect(m_LoginForm, SIGNAL(passwordWasInvalid(bool)), this, SLOT(showWrongPasswordLabel(bool)));
         connect(m_LoginForm, SIGNAL(userIsEnteringData()), this, SLOT(hideWrongPasswordLabel()));
         connect(m_LoginForm, SIGNAL(contestCantBeLoaded(QString)), this, SLOT(showContestcantBeLoaded(QString)));
+        connect(m_LoginForm, SIGNAL(contestCanBeLoaded()), this, SLOT(hideErrors()));
         connect(m_LoginForm, SIGNAL(userPressedKey()), this, SLOT(showDoNotMachine()));
 
         // This hack ensures that the primary screen will have focus
@@ -59,9 +60,7 @@ MainWindow::MainWindow(int screen, QWidget *parent) :
         m_InfoLabel = new QLabel(this);
         m_InfoLabel->setWordWrap(true);
         m_InfoLabel->setAlignment(Qt::AlignCenter);
-        // TODO: enable again and remove initial lable
-//        m_InfoLabel->setVisible(false);
-        m_InfoLabel->setText(Settings().initialMessage());
+        m_InfoLabel->setVisible(false);
 
         QPalette pal = QPalette();
         pal.setColor(QPalette::Window, Qt::red);
@@ -76,6 +75,37 @@ MainWindow::MainWindow(int screen, QWidget *parent) :
 
         m_InfoLabel->move(0, this->height() - 100);
         m_InfoLabel->resize(this->width(), 100);
+
+        if (!Settings().ccsTeamName().isEmpty()) {
+            m_TeamLabel = new QLabel(this);
+            m_TeamLabel->setWordWrap(true);
+            m_TeamLabel->setAlignment(Qt::AlignCenter);
+            m_TeamLabel->setVisible(true);
+            m_TeamLabel->setText(Settings().ccsTeamName());
+
+            QColor teamLabelColor = Qt::white;
+            if (!Settings().ccsTeamLabelColor().isEmpty()) {
+                teamLabelColor = QColor(Settings().ccsTeamLabelColor());
+            }
+            pal.setColor(QPalette::WindowText, teamLabelColor);
+
+            font.setPointSize(16);
+
+            m_TeamLabel->setAutoFillBackground(false);
+            m_TeamLabel->setPalette(pal);
+            m_TeamLabel->setFont(font);
+
+            m_TeamLabel->move(0, 0);
+            m_TeamLabel->resize(this->width(), 100);
+
+            auto *shadow = new QGraphicsDropShadowEffect(this);
+            shadow->setBlurRadius(2);
+            shadow->setOffset(2, 2);
+            if (!Settings().ccsTeamLabelShadowColor().isEmpty()) {
+                shadow->setColor(QColor(Settings().ccsTeamLabelShadowColor()));
+            }
+            m_TeamLabel->setGraphicsEffect(shadow);
+        }
     }
 }
 
@@ -171,7 +201,7 @@ void MainWindow::showWrongPasswordLabel(bool forAutoLogin) {
 }
 
 void MainWindow::hideWrongPasswordLabel() {
-//    m_InfoLabel->setVisible(false);
+    m_InfoLabel->setVisible(false);
 }
 
 void MainWindow::showContestcantBeLoaded(const QString& message) {
@@ -182,4 +212,8 @@ void MainWindow::showContestcantBeLoaded(const QString& message) {
 void MainWindow::showDoNotMachine() {
     m_InfoLabel->setText("Do not touch the machine");
     m_InfoLabel->setVisible(true);
+}
+
+void MainWindow::hideErrors() {
+    m_InfoLabel->setVisible(false);
 }

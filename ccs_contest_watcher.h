@@ -28,6 +28,7 @@ signals:
     void contestAboutToStart();
     void contestStarted();
     void errorLoadingContest(QString message);
+    void clearErrors();
 
 private slots:
 

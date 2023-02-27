@@ -46,6 +46,7 @@ private slots:
     void contestStarted();
     void textChanged(QString text);
     void errorLoadingContest(const QString& message);
+    void clearErrors();
 
 protected:
     virtual void keyPressEvent(QKeyEvent *event);
@@ -75,6 +76,7 @@ signals:
     void passwordWasInvalid(bool wasAutoLogin);
     void userIsEnteringData();
     void contestCantBeLoaded(const QString& message);
+    void contestCanBeLoaded();
     void userPressedKey();
 };
 

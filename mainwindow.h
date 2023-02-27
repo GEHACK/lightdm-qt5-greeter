@@ -39,6 +39,7 @@ private:
     int m_Screen;
     LoginForm* m_LoginForm;
     QLabel* m_InfoLabel;
+    QLabel* m_TeamLabel;
     Downloader *d;
 
 private slots:
@@ -46,6 +47,7 @@ private slots:
     void showWrongPasswordLabel(bool forAutoLogin);
     void hideWrongPasswordLabel();
     void showContestcantBeLoaded(const QString& message);
+    void hideErrors();
     void showDoNotMachine();
 };
 

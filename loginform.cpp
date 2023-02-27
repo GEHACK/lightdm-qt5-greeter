@@ -91,6 +91,7 @@ void LoginForm::initialize()
     connect(contestWatcher, &CcsContestWatcher::contestAboutToStart, this, &LoginForm::contestAboutToStart);
     connect(contestWatcher, &CcsContestWatcher::contestStarted, this, &LoginForm::contestStarted);
     connect(contestWatcher, &CcsContestWatcher::errorLoadingContest, this, &LoginForm::errorLoadingContest);
+    connect(contestWatcher, &CcsContestWatcher::clearErrors, this, &LoginForm::clearErrors);
 
     ui->passwordInput->setEnabled(false);
     ui->passwordInput->clear();
@@ -284,4 +285,8 @@ void LoginForm::textChanged(QString text) {
 
 void LoginForm::errorLoadingContest(const QString& message) {
     emit contestCantBeLoaded(message);
+}
+
+void LoginForm::clearErrors() {
+    emit contestCanBeLoaded();
 }
